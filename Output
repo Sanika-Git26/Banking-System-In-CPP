@@ -1,0 +1,109 @@
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 1
+Enter First Name: Sanika
+Enter Last Name: T
+Enter Initial Balance: 10000
+
+Account Created:
+Account Number: 2
+Name: Sanika T
+Balance: 10000
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 2
+Enter Account Number: 1
+
+Account Details:
+Account Number: 1
+Name: Sanika T
+Balance: 10000
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 3
+Enter Account Number: 1
+Enter Amount: 1000
+
+Updated Account:
+Account Number: 1
+Name: Sanika T
+Balance: 11000
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 4
+Enter Account Number: 1
+Enter Amount: 2000
+
+Updated Account:
+Account Number: 1
+Name: Sanika T
+Balance: 9000
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 6
+Account Number: 1
+Name: Sanika T
+Balance: 9000
+
+Account Number: 2
+Name: Sanika T
+Balance: 10000
+
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 5
+Enter Account Number: 1
+Account 1 closed.
+
+*** Banking System ***
+1. Open an Account
+2. Balance Enquiry
+3. Deposit
+4. Withdraw
+5. Close an Account
+6. Show All Accounts
+7. Exit
+Enter your choice: 7
+Exiting...

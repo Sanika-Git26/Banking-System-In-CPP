@@ -1,0 +1,208 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+using namespace std;
+
+#define MIN_BALANCE 500
+
+class InsufficientFunds {};
+
+class Account {
+private:
+    long accountNumber;
+    string firstName, lastName;
+    float balance;
+    static long NextAccountNumber;
+
+public:
+    Account() {}
+    Account(string fname, string lname, float balance);
+
+    long getAccNo() const { return accountNumber; }
+    string getFirstName() const { return firstName; }
+    string getLastName() const { return lastName; }
+    float getBalance() const { return balance; }
+
+    void Deposit(float amount);
+    void Withdraw(float amount);
+    static void setLastAccountNumber(long accountNumber);
+    static long getLastAccountNumber();
+
+    friend ofstream& operator<<(ofstream& ofs, const Account& acc);
+    friend ifstream& operator>>(ifstream& ifs, Account& acc);
+    friend ostream& operator<<(ostream& os, const Account& acc);
+};
+
+long Account::NextAccountNumber = 0;
+
+class Bank {
+private:
+    map<long, Account> accounts;
+
+public:
+    Bank();
+    Account OpenAccount(const string& fname, const string& lname, float balance);
+    Account BalanceEnquiry(long accountNumber) const;
+    Account Deposit(long accountNumber, float amount);
+    Account Withdraw(long accountNumber, float amount);
+    void CloseAccount(long accountNumber);
+    void ShowAllAccounts() const;
+    ~Bank();
+};
+
+// Account class implementation
+Account::Account(string fname, string lname, float balance) {
+    accountNumber = ++NextAccountNumber;
+    firstName = move(fname);
+    lastName = move(lname);
+    this->balance = balance;
+}
+
+void Account::Deposit(float amount) {
+    balance += amount;
+}
+
+void Account::Withdraw(float amount) {
+    if (balance - amount < MIN_BALANCE)
+        throw InsufficientFunds();
+    balance -= amount;
+}
+
+void Account::setLastAccountNumber(long accountNumber) {
+    NextAccountNumber = accountNumber;
+}
+
+long Account::getLastAccountNumber() {
+    return NextAccountNumber;
+}
+
+ofstream& operator<<(ofstream& ofs, const Account& acc) {
+    ofs << acc.accountNumber << endl << acc.firstName << endl << acc.lastName << endl << acc.balance << endl;
+    return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, Account& acc) {
+    ifs >> acc.accountNumber >> acc.firstName >> acc.lastName >> acc.balance;
+    return ifs;
+}
+
+ostream& operator<<(ostream& os, const Account& acc) {
+    os << "Account Number: " << acc.getAccNo() << "\nName: " << acc.getFirstName() << " " << acc.getLastName()
+        << "\nBalance: " << acc.getBalance() << endl;
+    return os;
+}
+
+// Bank class implementation
+Bank::Bank() {
+    ifstream infile("Bank.data");
+    if (!infile) return;
+    Account account;
+    while (infile >> account) {
+        accounts[account.getAccNo()] = account;
+    }
+    Account::setLastAccountNumber(account.getAccNo());
+    infile.close();
+}
+
+Account Bank::OpenAccount(const string& fname, const string& lname, float balance) {
+    Account account(fname, lname, balance);
+    accounts[account.getAccNo()] = account;
+    return account;
+}
+
+Account Bank::BalanceEnquiry(long accountNumber) const {
+    return accounts.at(accountNumber);
+}
+
+Account Bank::Deposit(long accountNumber, float amount) {
+    accounts.at(accountNumber).Deposit(amount);
+    return accounts.at(accountNumber);
+}
+
+Account Bank::Withdraw(long accountNumber, float amount) {
+    accounts.at(accountNumber).Withdraw(amount);
+    return accounts.at(accountNumber);
+}
+
+void Bank::CloseAccount(long accountNumber) {
+    accounts.erase(accountNumber);
+    cout << "Account " << accountNumber << " closed." << endl;
+}
+
+void Bank::ShowAllAccounts() const {
+    for (const auto& acc : accounts) {
+        cout << acc.second << endl;
+    }
+}
+
+Bank::~Bank() {
+    ofstream outfile("Bank.data", ios::trunc);
+    for (const auto& acc : accounts) {
+        outfile << acc.second;
+    }
+    outfile.close();
+}
+
+// Main function
+int main() {
+    Bank bank;
+    int choice;
+    long accountNumber;
+    float balance, amount;
+    string fname, lname;
+
+    do {
+        cout << "\n*** Banking System ***";
+        cout << "\n1. Open an Account";
+        cout << "\n2. Balance Enquiry";
+        cout << "\n3. Deposit";
+        cout << "\n4. Withdraw";
+        cout << "\n5. Close an Account";
+        cout << "\n6. Show All Accounts";
+        cout << "\n7. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        try {
+            switch (choice) {
+            case 1:
+                cout << "Enter First Name: "; cin >> fname;
+                cout << "Enter Last Name: "; cin >> lname;
+                cout << "Enter Initial Balance: "; cin >> balance;
+                cout << "\nAccount Created:\n" << bank.OpenAccount(fname, lname, balance);
+                break;
+            case 2:
+                cout << "Enter Account Number: "; cin >> accountNumber;
+                cout << "\nAccount Details:\n" << bank.BalanceEnquiry(accountNumber);
+                break;
+            case 3:
+                cout << "Enter Account Number: "; cin >> accountNumber;
+                cout << "Enter Amount: "; cin >> amount;
+                cout << "\nUpdated Account:\n" << bank.Deposit(accountNumber, amount);
+                break;
+            case 4:
+                cout << "Enter Account Number: "; cin >> accountNumber;
+                cout << "Enter Amount: "; cin >> amount;
+                cout << "\nUpdated Account:\n" << bank.Withdraw(accountNumber, amount);
+                break;
+            case 5:
+                cout << "Enter Account Number: "; cin >> accountNumber;
+                bank.CloseAccount(accountNumber);
+                break;
+            case 6:
+                bank.ShowAllAccounts();
+                break;
+            case 7:
+                cout << "Exiting...";
+                break;
+            default:
+                cout << "Invalid option! Try again.";
+            }
+        }
+        catch (const exception& e) {
+            cout << "Error: Invalid account number or insufficient funds!";
+        }
+    } while (choice != 7);
+
+    return 0;
+}
